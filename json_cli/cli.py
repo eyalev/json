@@ -32,22 +32,33 @@ def cli(context: Context, file_path):
 
 
 @cli.command()
-@click.argument("key-value")
+@click.argument("key")
 @click.pass_context
-def add(context, key_value):
+def remove(context, key):
     file_path = context.obj[FILE_PATH_CONTEXT]
     json_file = JSONFile(file_path)
-    json_file.add_key_value_string(key_value)
+    result = json_file.remove(key)
+
+    if result is False:
+        print(f'Key: "{key}" not found.')
+
     print(json_file.pretty)
 
 
-@cli.command(help="Alias for add")
-@click.argument("key-value")
+@cli.command()
+@click.argument("arg", nargs=-1)
 @click.pass_context
-def update(context, key_value):
+def update(context, arg):
+
     file_path = context.obj[FILE_PATH_CONTEXT]
     json_file = JSONFile(file_path)
-    json_file.add_key_value_string(key_value)
+
+    if isinstance(arg, tuple):
+        # Multi args
+        json_file.update_key_value(key=arg[0], value=arg[1])
+    else:
+        json_file.add_key_value_string(arg)
+
     print(json_file.pretty)
 
 

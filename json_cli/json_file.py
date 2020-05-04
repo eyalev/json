@@ -16,7 +16,7 @@ class JSONFile(File):
         return json.dumps(self.dict, indent=4)
 
     @property
-    def dict(self):
+    def dict(self) -> dict:
         return json.loads(self.text)
 
     def write_dict(self, _dict):
@@ -40,4 +40,26 @@ class JSONFile(File):
 
     def create(self):
         self.write_dict({})
+
+    def update_key_value(self, key: str, value):
+
+        # "detachKeys": "ctrl-e,e"
+        if key.endswith(':'):
+            key = key.replace(':', '')
+
+        _dict = self.dict
+        _dict[key] = value
+        self.write_dict(_dict)
+
+        return True
+
+    def remove(self, key):
+        _dict = self.dict
+
+        if key not in _dict:
+            return False
+
+        _dict.pop(key)
+        self.write_dict(_dict)
+        return True
 
