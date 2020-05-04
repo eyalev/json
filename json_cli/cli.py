@@ -1,4 +1,7 @@
+
 import click
+
+from click import Context
 
 from pobject import I
 from file_util import File
@@ -10,9 +13,19 @@ FILE_PATH_CONTEXT = "file_path"
 @click.group(invoke_without_command=True)
 @click.option("--file", "file_path")
 @click.pass_context
-def cli(context, file_path):
+def cli(context: Context, file_path):
     if context.invoked_subcommand is None:
-        print(JSONFile(file_path).pretty)
+        if file_path:
+            json_file = JSONFile(file_path)
+
+            if not json_file.exists():
+                json_file.create()
+                print(f'Created JSON file: {json_file.path}')
+
+            print(json_file.pretty)
+        else:
+            _help = context.get_help()
+            print(_help)
     else:
         context.ensure_object(dict)
         context.obj[FILE_PATH_CONTEXT] = file_path

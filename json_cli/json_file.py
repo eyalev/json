@@ -35,3 +35,9 @@ class JSONFile(File):
 
         return True
 
+    def exists(self):
+        return self.pathlib.exists()
+
+    def create(self):
+        self.write_dict({})
+
